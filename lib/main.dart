@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
-import 'competition_page.dart';
+import 'homepage.dart';
 
 void main(){
   runApp(const MakerFairWeb());
@@ -22,30 +22,29 @@ class MakerFairWeb extends StatelessWidget {
         ),
         fontFamily:'Bitcount Grid Double',
       ),
-      home: const MyScaffold(),
+      home: HomePage(),
     );
   }
 }
 
 class MakerFairbar extends StatelessWidget {
-  const MakerFairbar({required this.title, super.key});
-
+  final Function(String)? onNavigate;
+  final VoidCallback? onSearch; 
   final Widget title;
+  const MakerFairbar({super.key, required this.title, this.onNavigate, this.onSearch});
 
   @override
   Widget build(BuildContext context) {    
     return Container(
-      height : 100,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      height: 100,
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       decoration: const BoxDecoration(
-        color: Color(0xFF001F3F), // Navy Blue
+        color: Color(0xFF001F3F), // Navy 
         boxShadow: [],
       ),
-      child: Row(
+      child: Row( 
         children: [
-          InkWell(onTap: (){
-            //Next time
-          }, 
+          InkWell(onTap: (){}, 
           borderRadius: BorderRadius.circular(8),
           splashColor: Colors.white24,
           highlightColor: Colors.white12,
@@ -66,7 +65,7 @@ class MakerFairbar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextButton(
-                  onPressed: (){},
+                  onPressed: () => onNavigate?.call('about'),
                   style: TextButton.styleFrom(
                     overlayColor: Colors.transparent,
                   ),
@@ -78,16 +77,20 @@ class MakerFairbar extends StatelessWidget {
                     title: 'SUPPORT US',
                     width: 200,
                     textStyle: const TextStyle(color: Colors.white, fontSize: 20),
-                    items: const [
+                    onTitle: () => onNavigate?.call('support'),
+                    items: [
                       DropdownItem (
                         label: 'MAKE A CONTRIBUTION',
                         url: null, //next time
+                        onTapOverride: () => onNavigate?.call('support'),
                       ),
                       
                       DropdownItem(
                         label:'BECOME OUR SPONSOR',
                         url: null, //next time
+                        onTapOverride: () => onNavigate?.call('support'),
                       ),
+                      
                     ],// Add functionality for title button
                   ),
                 const SizedBox(width: 20),
@@ -96,58 +99,30 @@ class MakerFairbar extends StatelessWidget {
                     title: 'COMPETITION',
                     width: 200,
                     textStyle: const TextStyle(color: Colors.white, fontSize: 20),
-                    onTitle: () {
-                      Navigator.push(
-                        context, 
-                        MaterialPageRoute(
-                          builder: (context) => CompetitionPage(initialSection: null)
-                          ),
-                      );
-                    },
+                    onTitle: ()  => onNavigate?.call('competition'),
                     items: [
                       DropdownItem (
                         label: 'CATEGORIES',
                         url: null,
-                        onTapOverride: (){
-                          Navigator.push(
-                            context, 
-                            MaterialPageRoute(
-                              builder: (context) => CompetitionPage(initialSection: 'category',)
-                              ),
-                          );
-                        }
+                        onTapOverride: () => onNavigate?.call('category'),
                       ),
                       
                       DropdownItem(
                         label:'JOIN ROBOTRACK GP',
                         url: null,
-                        onTapOverride: (){
-                          Navigator.push(
-                            context, 
-                            MaterialPageRoute(
-                              builder: (context) => CompetitionPage(initialSection: 'registration',)
-                              ),
-                          );
-                        }
+                        onTapOverride: () => onNavigate?.call('registration'),
                       ),
                       DropdownItem(
                         label:'FAQs',
                         url: null,
-                        onTapOverride: (){
-                          Navigator.push(
-                            context, 
-                            MaterialPageRoute(
-                              builder: (context) => CompetitionPage(initialSection: 'faq',)
-                              ),
-                          );
-                        }
+                        onTapOverride: () => onNavigate?.call('faq'),
                       )
                     ],// Add functionality for title button
                   ),
                 const SizedBox(width: 20),
 
                 TextButton(
-                  onPressed: (){},
+                  onPressed: () => onNavigate?.call('contact'),
                   style: TextButton.styleFrom(
                     overlayColor: Colors.transparent,
                   ),
@@ -156,39 +131,13 @@ class MakerFairbar extends StatelessWidget {
               ],
             )
           ),
-          const IconButton(
+          IconButton(
             icon: Icon(Icons.search, size: 40, color: Colors.white),
-            onPressed: null, // Add functionality for account button
+            onPressed: onSearch,
+             // Add functionality for account button
           ),
         ]
       )
-    );
-  }
-}
-
-class MyScaffold extends StatelessWidget {
-  const MyScaffold({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(100),
-        child: MakerFairbar(
-          title: const Text(
-            'PETROBOTS Maker Fair 2026',
-            style: TextStyle(color: Colors.white, fontSize: 20),
-          ),
-        ),
-      ),
-      
-      
-      body:   
-        Container(
-          color: Colors.white,
-          child: Column(children: [
-            Container(height: 4, color: Colors.amber),
-          ],)),
     );
   }
 }

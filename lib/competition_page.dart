@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'main.dart';
 
 class CompetitionPage extends StatelessWidget {
   final String ? initialSection;
@@ -14,16 +15,32 @@ class CompetitionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (initialSection != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollToSection(initialSection!);
+        _scrollToSection(context,initialSection!);
       });
     }
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('PETROBOTS RoboTrack Grand Prix 2026'),
-        backgroundColor: const Color(0xFF001F3F),
-        foregroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.white),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(100),
+        child: MakerFairbar(
+          title: const Text('PETROBOTS Maker Fair 2026'),
+          onNavigate: (section) {
+
+            if (['category', 'registration', 'faq'].contains(section)) {
+              _scrollToSection(context, section);
+            } else if (['about', 'support', 'contact'].contains(section)) {
+              Navigator.pop(context, section);
+            } else if (section == 'competition') {
+              Scrollable.ensureVisible(
+                _introKey.currentContext!,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            }
+          },
+          onSearch: () => _showSearch(context),
+        )
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -42,7 +59,7 @@ class CompetitionPage extends StatelessWidget {
       ),
     );
   }
-  void _scrollToSection(String section) {
+  bool _scrollToSection(BuildContext context, String section) {
     late final GlobalKey targetKey;
     switch (section) {
       case 'category':
@@ -55,7 +72,7 @@ class CompetitionPage extends StatelessWidget {
         targetKey = _faqKey;
         break;
       default:
-        return;
+        return false;
     }
     final scrollContext = targetKey.currentContext;
     if (scrollContext != null) {
@@ -65,7 +82,9 @@ class CompetitionPage extends StatelessWidget {
         curve: Curves.easeInOut,
         alignment: 0.1,
       );
+      return true;
     }
+    return false;
   }
 
   Widget _buildIntro(BuildContext context, {Key? key}) {
@@ -100,7 +119,7 @@ class CompetitionPage extends StatelessWidget {
           ),
           child: const Center(
             child: Text(
-              '🏁 RoboTrack GP Banner',
+              'RoboTrack GP Banner',
               style: TextStyle(color: Color(0xFF001F3F), fontSize: 20),
             ),
           ),
@@ -322,5 +341,93 @@ class CompetitionPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+void _showSearch(BuildContext context) {
+    final searching = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('🔍 Search'),
+        content: TextField(
+          controller: searching,
+          autofocus: true,
+          decoration: const InputDecoration(
+            hintText: 'Search: about, support, contact, category, registration, faq...',
+            prefixIcon: Icon(Icons.search),
+            border: OutlineInputBorder(),
+          ),
+          onSubmitted: (query) => _searchQuery(context, query, searching),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              searching.clear();
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final query = searching.text.trim();
+              _searchQuery(context, query, searching);
+            },
+            child: const Text('Search'),
+          ),
+        ],
+      ),
+    ).then((_) => searching.dispose()); 
+  }
+
+  void _searchQuery(BuildContext context, String query, TextEditingController searching) {
+    final lowerQuery = query.toLowerCase().trim();
+    
+    if (['about', 'support', 'contact'].contains(lowerQuery)) {
+      Navigator.pop(context); 
+   
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Returning to HomePage for "$lowerQuery"...')),
+      );
+      Navigator.pop(context, lowerQuery); 
+    } 
+    else if (['category', 'registration', 'faq', 'competition'].contains(lowerQuery)) {
+      Navigator.pop(context);
+
+      if (['category', 'registration', 'faq'].contains(lowerQuery)) {
+
+        if (_scrollToSection(context, lowerQuery)) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Scrolled to "$lowerQuery" section')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Could not scroll to "$lowerQuery" section'),
+              backgroundColor: Colors.amber,
+            ),
+          );
+        }
+      } else {
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('🔍 Scrolling to top of CompetitionPage')),
+        );
+        Scrollable.ensureVisible(
+          _introKey.currentContext!,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    } 
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(' No results found for "$query"'),
+          backgroundColor: Colors.amber,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 }
