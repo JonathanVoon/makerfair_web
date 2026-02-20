@@ -30,8 +30,9 @@ class MakerFairWeb extends StatelessWidget {
 class MakerFairbar extends StatelessWidget {
   final Function(String)? onNavigate;
   final VoidCallback? onSearch; 
+  final VoidCallback? onLogo;
   final Widget title;
-  const MakerFairbar({super.key, required this.title, this.onNavigate, this.onSearch});
+  const MakerFairbar({super.key, required this.title, this.onNavigate, this.onSearch, this.onLogo});
 
   @override
   Widget build(BuildContext context) {    
@@ -44,12 +45,12 @@ class MakerFairbar extends StatelessWidget {
       ),
       child: Row( 
         children: [
-          InkWell(onTap: (){}, 
+          InkWell(onTap: onLogo, 
           borderRadius: BorderRadius.circular(8),
           splashColor: Colors.white24,
           highlightColor: Colors.white12,
           child:
-            Padding(padding: EdgeInsets.symmetric(horizontal: 4),
+            Padding(padding: const EdgeInsets.symmetric(horizontal: 4),
             child: SizedBox(
               height: 90,
               width: 200,

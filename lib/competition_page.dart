@@ -38,6 +38,7 @@ class CompetitionPage extends StatelessWidget {
             }
           },
           onSearch: () => _showSearch(context),
+          onLogo: (){ Navigator.pop(context, 'home');},
         )
       ),
 
@@ -430,4 +431,4 @@ void _showSearch(BuildContext context) {
       );
     }
   }
-}
+}   

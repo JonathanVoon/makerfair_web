@@ -8,6 +8,7 @@ class HomePage extends StatelessWidget {
   final _aboutKey = GlobalKey();
   final _supportKey = GlobalKey();
   final _contactKey = GlobalKey();
+  final _scrollController = ScrollController();
 
   HomePage({super.key});
 
@@ -26,6 +27,8 @@ class HomePage extends StatelessWidget {
               ).then((result){
                 if(result is String && ['about', 'support', 'contact'].contains(result)){
                   _scrollToSection(context, result);
+                } else if(result == 'home'){
+                  _scrolltoTop(context);
                 }
               });
             } else if(['category', 'registration', 'faq'].contains(section)) {
@@ -35,6 +38,8 @@ class HomePage extends StatelessWidget {
               ).then((result){
                 if(result is String && ['about', 'support', 'contact'].contains(result)){
                   _scrollToSection(context, result);
+                } else if(result == 'home'){
+                  _scrolltoTop(context);
                 }
               });
              } else {
@@ -42,9 +47,11 @@ class HomePage extends StatelessWidget {
             }
           },
           onSearch: () => _showSearch(context),
+          onLogo: () => _scrolltoTop(context),
         ),
       ),
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Column(
           children: [
             _buildHeroSection(context),
@@ -137,6 +144,8 @@ class HomePage extends StatelessWidget {
                   ).then((result){
                     if(result is String && ['about', 'support', 'contact'].contains(result)){
                       _scrollToSection(context, result);
+                    } else if (result == 'home'){
+                      _scrolltoTop(context);
                     }
                   });
                 },
@@ -454,7 +463,7 @@ class HomePage extends StatelessWidget {
                     'assets/icons/instagram.png',
                     height: 32,
                     width: 32,
-                    color: Colors.white,  // Makes icon white
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -597,6 +606,21 @@ class HomePage extends StatelessWidget {
         ),
       );
     }
+  }
+
+  void _scrolltoTop(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(0.0);
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Returned to HomePage top'),
+          duration: Duration(seconds: 1),
+          behavior: SnackBarBehavior.floating,
+          ),
+      );
+    });
   }
 }
 
