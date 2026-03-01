@@ -179,13 +179,13 @@ class CompetitionPage extends StatelessWidget {
         _buildCategoryCard(
           context,
           'Expert Category',
-          'Secondary School / University Level',
+          'Elementary School / Secondary School',
           '• LEGO or Arduino (8-bit Atmel) platforms\n'
           '• Maximum 2 motors for locomotion\n'
           '• Maximum 2 IR sensors only\n'
           '• Max voltage: 9.6V (2S LiPo or 6x AA)\n'
           '• Robot footprint: 25cm x 25cm\n'
-          '• Entry Fee: RM200 (Local) / \$100 (International)\n'
+          '• Entry Fee (per team): RM200 (Local) / \$100 (International)\n'
           '• Prizes: 1st RM2000 | 2nd RM1500 | 3rd RM1000',
           Colors.blueGrey,
         ),
