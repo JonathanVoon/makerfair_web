@@ -52,9 +52,9 @@ class MakerFairbar extends StatelessWidget {
           child:
             Padding(padding: const EdgeInsets.symmetric(horizontal: 4),
             child: SizedBox(
-              height: 90,
+              height: 80,
               width: 200,
-              child: Image.asset('assets/petrobots logo.png', fit: BoxFit.cover,color: Colors.white),
+              child: Image.asset('assets/PMFnewlogo.png', fit: BoxFit.contain,color: Colors.white),
              )
             ), 
           ),

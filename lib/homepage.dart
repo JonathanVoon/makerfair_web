@@ -1,16 +1,91 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'competition_page.dart';
 import 'main.dart';
 
-class HomePage extends StatelessWidget {
- 
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final _aboutKey = GlobalKey();
   final _supportKey = GlobalKey();
   final _contactKey = GlobalKey();
   final _scrollController = ScrollController();
+  
+  final PageController _pageController = PageController();
+  int _currentImageIndex = 0;
+  Timer? _slideshowTimer;
+  
 
-  HomePage({super.key});
+  final List<String> _heroImages = [
+    'assets/Group-photo-Makerfair25.png',
+    'assets/IMG_0629.png',
+    'assets/IMG_3451.png', 
+    'assets/IMG_3546.png',
+    'assets/IMG_3641.png',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _startSlideshow();
+  }
+
+  @override
+  void dispose() {
+    _slideshowTimer?.cancel();
+    _pageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _startSlideshow() {
+    _slideshowTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      if (_currentImageIndex < _heroImages.length - 1) {
+        _currentImageIndex++;
+      } else {
+        _currentImageIndex = 0;
+      }
+      _pageController.animateToPage(
+        _currentImageIndex,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+      if (mounted) setState(() {});
+    });
+  }
+
+  void _goToImage(int index) {
+    _currentImageIndex = index;
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+    if (mounted) setState(() {});
+  }
+
+  TextStyle _bigWordStyle({double fontSize = 32, Color? color}) {
+    return TextStyle(
+      fontFamily: 'Bungee',
+      fontSize: fontSize,
+      fontWeight: FontWeight.bold,
+      color: color ?? const Color(0xFF001F3F),
+    );
+  }
+
+  TextStyle _smallWordStyle({double fontSize = 16, Color? color}) {
+    return TextStyle(
+      fontFamily: 'Archivo Black',
+      fontSize: fontSize,
+      color: color ?? Colors.grey[800],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,30 +94,34 @@ class HomePage extends StatelessWidget {
         preferredSize: const Size.fromHeight(80),
         child: MakerFairbar(
           title: const Text('PETROBOTS Maker Fair 2026'),
-          onNavigate:(section){
-            if(section =='competition'){
+          onNavigate: (section) {
+            if (!context.mounted) return;
+            
+            if (section == 'competition') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CompetitionPage(initialSection: null,)),
-              ).then((result){
-                if(result is String && ['about', 'support', 'contact'].contains(result)){
+                MaterialPageRoute(builder: (context) => CompetitionPage(initialSection: null)),
+              ).then((result) {
+                if (!context.mounted) return;
+                if (result is String && ['about', 'support', 'contact'].contains(result)) {
                   _scrollToSection(context, result);
-                } else if(result == 'home'){
+                } else if (result == 'home') {
                   _scrolltoTop(context);
                 }
               });
-            } else if(['category', 'registration', 'faq'].contains(section)) {
+            } else if (['category', 'registration', 'faq'].contains(section)) {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => CompetitionPage(initialSection: section)),
-              ).then((result){
-                if(result is String && ['about', 'support', 'contact'].contains(result)){
+              ).then((result) {
+                if (!context.mounted) return;
+                if (result is String && ['about', 'support', 'contact'].contains(result)) {
                   _scrollToSection(context, result);
-                } else if(result == 'home'){
+                } else if (result == 'home') {
                   _scrolltoTop(context);
                 }
               });
-             } else {
+            } else {
               _scrollToSection(context, section);
             }
           },
@@ -66,104 +145,183 @@ class HomePage extends StatelessWidget {
   }
 
   bool _scrollToSection(BuildContext context, String section) {
-    late final GlobalKey targetKey;
-    switch (section) {
-      case 'about':
-        targetKey = _aboutKey;
-        break;
-      case 'support':
-        targetKey = _supportKey;
-        break;
-      case 'contact':
-        targetKey = _contactKey;
-        break;
-      default:
-        return false;
+      
+      if (!context.mounted) return false;
+      
+      late final GlobalKey targetKey;
+      switch (section) {
+        case 'about':
+          targetKey = _aboutKey;
+          break;
+        case 'support':
+          targetKey = _supportKey;
+          break;
+        case 'contact':
+          targetKey = _contactKey;
+          break;
+        default:
+          return false;
+      }
+      final scrollContext = targetKey.currentContext;
+      if (scrollContext != null) {
+        Scrollable.ensureVisible(
+          scrollContext,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          alignment: 0.1,
+        );
+        return true;
+      }
+      return false;
     }
-    final scrollContext = targetKey.currentContext;
-    if (scrollContext != null) {
-      Scrollable.ensureVisible(
-        scrollContext,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-        alignment: 0.1,
-      );
-      return true;
-    }
-    return false;
-  }
 
   Widget _buildHeroSection(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.8,
-      width: double.infinity,  
-      decoration: BoxDecoration(
-        color: const Color(0xFF001F3F), 
-        image: DecorationImage(
-          image: AssetImage('assets/hero-background.jpg'), 
-          fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(
-            const Color(0xFF001F3F).withOpacity(0.7), 
-            BlendMode.multiply,
-          ),
+    return Column(
+      children: [
+        Container(
+          height: 7,
+          width: double.infinity,
+          color: const Color(0xFFD4AF37),
         ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'PETROBOTS Maker Fair 2026',
-            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Engineering Intelligence with Robotics and Automation',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Colors.white70,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          Text(
-            '27th-28th June 2026 | Universiti Teknologi PETRONAS (UTP)',
-            style: const TextStyle(color: Colors.white, fontSize: 16),
-          ),
-          const SizedBox(height: 32),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+        
+        Container(
+          height: MediaQuery.of(context).size.height * 0.8,
+          width: double.infinity,  
+          child: Stack(
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CompetitionPage(initialSection: null)),
-                  ).then((result){
-                    if(result is String && ['about', 'support', 'contact'].contains(result)){
-                      _scrollToSection(context, result);
-                    } else if (result == 'home'){
-                      _scrolltoTop(context);
-                    }
-                  });
+              PageView.builder(
+                controller: _pageController,
+                itemCount: _heroImages.length,
+                onPageChanged: (index) {
+                  if (mounted) {
+                    setState(() {
+                      _currentImageIndex = index;
+                    });
+                  }
                 },
-                child: const Text('Explore Competition'),
+                itemBuilder: (context, index) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF001F3F), 
+                      image: DecorationImage(
+                        image: AssetImage(_heroImages[index]), 
+                        fit: BoxFit.cover,
+                        colorFilter: ColorFilter.mode(
+                          const Color(0xFF001F3F).withOpacity(0.6), 
+                          BlendMode.multiply,
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
-              const SizedBox(width: 16),
-              OutlinedButton(
-                onPressed: () => _scrollToSection(context, 'support'), 
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  side: const BorderSide(color: Colors.white),
+              
+              Positioned.fill(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'PETROBOTS Maker Fair 2026',
+                      style: _bigWordStyle(fontSize: 48, color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Engineering Intelligence with Robotics and Automation',
+                      style: _bigWordStyle(fontSize: 24, color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      '27th-28th June 2026 | Universiti Teknologi PETRONAS (UTP)',
+                      style: _smallWordStyle(fontSize: 16, color: Colors.white),
+                    ),
+                    const SizedBox(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => CompetitionPage(initialSection: null)),
+                            ).then((result){
+                              if(result is String && ['about', 'support', 'contact'].contains(result)){
+                                _scrollToSection(context, result);
+                              } else if (result == 'home'){
+                                _scrolltoTop(context);
+                              }
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            foregroundColor: Colors.white, 
+                            side: const BorderSide(color: Colors.white), 
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                          ),
+                          child: Text(
+                            'Explore Competition',
+                            style: _smallWordStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        OutlinedButton(
+                          onPressed: () => _scrollToSection(context, 'support'), 
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            side: const BorderSide(color: Colors.white),
+                          ),
+                          child: Text(
+                            'Support Us',
+                            style: _smallWordStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                child: const Text('Support Us'),
+              ),
+              
+              Positioned(
+                bottom: 24,
+                left: 0,
+                right: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    _heroImages.length,
+                    (index) => Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: _currentImageIndex == index ? 12 : 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _currentImageIndex == index 
+                            ? Colors.white 
+                            : Colors.white.withOpacity(0.5),
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () => _goToImage(index),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
-        ],
-      ),
+        ),
+        
+        Container(
+          height: 7,
+          width: double.infinity,
+          color: const Color(0xFFD4AF37),
+        ),
+      ],
     );
   }
 
@@ -172,18 +330,19 @@ class HomePage extends StatelessWidget {
       key: key,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.all(40),
+        Padding(
+          padding: const EdgeInsets.all(40),
           child: Text(
             'About PETROBOTS Maker Fair',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            style: _bigWordStyle(fontSize: 32),
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40),
           child: Text(
             'UTP Robotics Society (PETROBOTS) is a well-established robotics society that has been active for a long time at UTP. Originally formed to compete in ROBOCON, it has gradually evolved to serve as a platform for undergraduate robotics advancement for students from diverse backgrounds.',
-            style: TextStyle(fontSize: 16, height: 1.6),
+            style: _smallWordStyle(fontSize: 16, color: Colors.grey[800]).copyWith(height: 1.6),
           ),
         ),
         const SizedBox(height: 24),
@@ -195,7 +354,7 @@ class HomePage extends StatelessWidget {
             runSpacing: 16,
             children: [
               _buildHighlightCard('Robotics & AI', 'Hands-on experience with autonomous robots and artificial intelligence.'),
-              _buildHighlightCard('Hands-on Learning', 'Workshops and competitions that build practical engineering skills.'),
+              _buildHighlightCard('Hands-on Learning', 'Competitions that build practical engineering skills.'),
               _buildHighlightCard('Industry Exposure', 'Connect with leading tech companies specializing in automation and IoT.'),
             ],
           ),
@@ -217,23 +376,30 @@ class HomePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          Text(
+            title,
+            style: _bigWordStyle(fontSize: 18),
+          ),
           const SizedBox(height: 8),
-          Text(description, style: TextStyle(color: Colors.grey[700], fontSize: 14)),
+          Text(
+            description,
+            style: _smallWordStyle(fontSize: 14, color: Colors.grey[700]),
+          ),
         ],
       ),
     );
   }
+
   Widget _buildSupportSection(BuildContext context, {Key? key}) {
     return Column(
       key: key,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.all(40),
+        Padding(
+          padding: const EdgeInsets.all(40),
           child: Text(
             'Support the Event',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            style: _bigWordStyle(fontSize: 32),
           ),
         ),
 
@@ -242,7 +408,6 @@ class HomePage extends StatelessWidget {
           child: LayoutBuilder(
             builder: (context, constraints) {
               if (constraints.maxWidth > 800) {
-
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -252,7 +417,6 @@ class HomePage extends StatelessWidget {
                   ],
                 );
               } else {
-
                 return Column(
                   children: [
                     _buildContributorCard(context),
@@ -264,11 +428,11 @@ class HomePage extends StatelessWidget {
             },
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
           child: Text(
             'Contributor support does not include branding, publicity, or commercial benefits and follows UTP financial governance policy.',
-            style: TextStyle(fontSize: 11, color: Colors.grey, fontStyle: FontStyle.italic),
+            style: _smallWordStyle(fontSize: 11, color: Colors.grey).copyWith(fontStyle: FontStyle.italic),
             textAlign: TextAlign.center,
           ),
         ),
@@ -287,39 +451,60 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Contributor Support', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(
+              'Contributor Support',
+              style: _bigWordStyle(fontSize: 20),
+            ),
             const SizedBox(height: 12),
-            const Text(
+            Text(
               'Non-commercial support for the event. Appreciation-based contribution to foster maker culture.',
-              style: TextStyle(height: 1.6),
+              style: _smallWordStyle(fontSize: 14).copyWith(height: 1.6),
             ),
             const SizedBox(height: 16),
             ExpansionTile(
-              title: const Text('What Contributors Receive'),
-              children: const [
+              title: Text(
+                'What Contributors Receive',
+                style: _bigWordStyle(fontSize: 16).copyWith(fontWeight: FontWeight.w600),
+              ),
+              children: [
                 Padding(
-                  padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('• Appreciation certificate'),
-                      Text('• Eligible for Tax Exemption'),
-                      Text('• Post-event impact report'),
+                      Text('• Eligible for Tax Exemption', style: _smallWordStyle(fontSize: 13)),
+                      Text('• Post-event impact report', style: _smallWordStyle(fontSize: 13)),
                     ],
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            const Text('ASSISTANT HEAD OF SPONSORSHIP DEPARTMENT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-            const Text('Muhammad Danish Abqari bin Syafiq Jasrin ', style: TextStyle(fontWeight: FontWeight.w500)),
+            Text(
+              'ASSISTANT HEAD OF SPONSORSHIP DEPARTMENT',
+              style: _bigWordStyle(fontSize: 12),
+            ),
+            Text(
+              'Muhammad Danish Abqari bin Syafiq Jasrin ',
+              style: _smallWordStyle(fontSize: 14).copyWith(fontWeight: FontWeight.w500),
+            ),
             const SizedBox(height: 12),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF001F3F),
+                  foregroundColor: Colors.white, 
+                  side: const BorderSide(color: Colors.white), 
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                ),
               onPressed: () async {
                 final uri = Uri.parse('mailto:muhammad_24006039@utp.edu.my');
                 if (await canLaunchUrl(uri)) await launchUrl(uri);
               },
-              child: const Text('Contact as Contributor'),
+              child: Text(
+                'Contact as Contributor',
+                style: _smallWordStyle(fontSize: 14, color: Colors.white),
+              ),
             ),
           ],
         ),
@@ -337,40 +522,63 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Event Sponsorship', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(
+              'Event Sponsorship',
+              style: _bigWordStyle(fontSize: 20),
+            ),
             const SizedBox(height: 12),
-            const Text(
+            Text(
               'Commercial partnership opportunities with branding, engagement, and social media exposure.',
-              style: TextStyle(height: 1.6),
+              style: _smallWordStyle(fontSize: 14).copyWith(height: 1.6),
             ),
             const SizedBox(height: 16),
             ExpansionTile(
-              title: const Text('What Sponsors Receive'),
-              children: const [
+              title: Text(
+                'What Sponsors Receive',
+                style: _bigWordStyle(fontSize: 16).copyWith(fontWeight: FontWeight.w600),
+              ),
+              children: [
                 Padding(
-                  padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('• Logo placement on event materials'),
-                      Text('• Not Eligible for Tax Exemption'),
-                      Text('• Social media exposure'),
-                      Text('• Opening & closing ceremony mention'),
+                      Text('• Logo placement on event materials', style: _smallWordStyle(fontSize: 13)),
+                      Text('• Not Eligible for Tax Exemption', style: _smallWordStyle(fontSize: 13)),
+                      Text('• Companies are eligible to register for exhibition booths ', style: _smallWordStyle(fontSize: 13)),
+                      Text('• Social media exposure', style: _smallWordStyle(fontSize: 13)),
+                      Text('• Opening & closing ceremony mention', style: _smallWordStyle(fontSize: 13)),
                     ],
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            const Text('HEAD OF SPONSORSHIP DEPARTMENT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-            const Text('Ammar Dzulkarnain bin Muhammad Najib', style: TextStyle(fontWeight: FontWeight.w500)),
+            Text(
+              'HEAD OF SPONSORSHIP DEPARTMENT',
+              style: _bigWordStyle(fontSize: 12),
+            ),
+            Text(
+              'Lim Ming Yang',
+              style: _smallWordStyle(fontSize: 14).copyWith(fontWeight: FontWeight.w500),
+            ),
             const SizedBox(height: 12),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF001F3F),
+                  foregroundColor: Colors.white, 
+                  side: const BorderSide(color: Colors.white), 
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                ),
               onPressed: () async {
-                final uri = Uri.parse('mailto:ammar_22010519@utp.edu.my');
+                final uri = Uri.parse('mailto:lim_24005921@utp.edu.my');
                 if (await canLaunchUrl(uri)) await launchUrl(uri);
               },
-              child: const Text('Contact as Sponsor'),
+              child: Text(
+                'Contact as Sponsor',
+                style: _smallWordStyle(fontSize: 14, color: Colors.white),
+              ),
             ),
           ],
         ),
@@ -383,11 +591,11 @@ class HomePage extends StatelessWidget {
       key: key,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.all(40),
+        Padding(
+          padding: const EdgeInsets.all(40),
           child: Text(
             'Contact Us',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            style: _bigWordStyle(fontSize: 32),
           ),
         ),
         Padding(
@@ -396,7 +604,7 @@ class HomePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildContactItem('Project Director', 'Jonathan Voon Yen Jie', 'yen_22011091@utp.edu.my'),
-              _buildContactItem('Sponsorship & Partnerships', 'Ammar Dzulkarnain bin Muhammad Najib', 'ammar_22010519@utp.edu.my'),
+              _buildContactItem('Sponsorship & Partnerships', 'Lim Ming Yang', 'lim_24005921@utp.edu.my'),
               _buildContactItem('General Enquiries', 'Geoffrey Lee Jin Yau', 'geoffrey_24006190@utp.edu.my'),
             ],
           ),
@@ -412,8 +620,14 @@ class HomePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(role, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          Text(name, style: TextStyle(color: Colors.grey[700])),
+          Text(
+            role,
+            style: _bigWordStyle(fontSize: 16),
+          ),
+          Text(
+            name,
+            style: _smallWordStyle(fontSize: 14, color: Colors.grey[700]),
+          ),
           InkWell(
             onTap: () async {
               final uri = Uri.parse('mailto:$email');
@@ -421,7 +635,9 @@ class HomePage extends StatelessWidget {
             },
             child: Text(
               email,
-              style: const TextStyle(color: Color(0xFF001F3F), decoration: TextDecoration.underline),
+              style: _smallWordStyle(fontSize: 14, color: const Color(0xFF001F3F)).copyWith(
+                decoration: TextDecoration.underline,
+              ),
             ),
           ),
         ],
@@ -437,12 +653,14 @@ class HomePage extends StatelessWidget {
         children: [
           // Logo placeholder
           SizedBox(
-            height: 60,
+            height: 200,
+            width: 400,
             child: Image.asset(
               'assets/petrobots logo.png',
               color: Colors.white,
+              fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) =>
-                  const Text('PETROBOTS', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                  Text('PETROBOTS', style: _bigWordStyle(fontSize: 24, color: Colors.white)),
             ),
           ),
           const SizedBox(height: 16),
@@ -452,7 +670,7 @@ class HomePage extends StatelessWidget {
             children: [
               InkWell(
                 onTap: () async {
-                final uri = Uri.parse('https://www.instagram.com/petrobotsmakerfair.utp?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==');  // 🔧 REPLACE WITH YOUR LINK
+                final uri = Uri.parse('https://www.instagram.com/petrobotsmakerfair.utp?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==    ');
                 if (await canLaunchUrl(uri)) {
                   await launchUrl(uri, mode: LaunchMode.externalApplication);
                 }
@@ -469,7 +687,7 @@ class HomePage extends StatelessWidget {
               ),
               InkWell(
                 onTap: () async {
-                  final uri = Uri.parse('https://www.linkedin.com/company/utp-petrobots/posts/?feedView=all');  // 🔧 REPLACE WITH YOUR LINK
+                  final uri = Uri.parse('https://www.linkedin.com/company/utp-petrobots/posts/?feedView=all    ');
                   if (await canLaunchUrl(uri)) {
                     await launchUrl(uri, mode: LaunchMode.externalApplication);
                   }
@@ -486,35 +704,36 @@ class HomePage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-
-          const Text(
+          Text(
             'PETROBOTS Maker Fair 2026',
-            style: TextStyle(color: Colors.white70),
+            style: _bigWordStyle(fontSize: 18, color: Colors.white70),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Universiti Teknologi PETRONAS (UTP), 32610 Seri Iskandar, Perak, Malaysia',
-            style: TextStyle(color: Colors.white, fontSize: 12),
+            style: _smallWordStyle(fontSize: 12, color: Colors.white),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'This event is organized by UTP PETROBOTS Student Society (UTP PETROBOTS)',
-            style: TextStyle(color: Colors.white30, fontSize: 10),
+            style: _smallWordStyle(fontSize: 10, color: Colors.white30),
             textAlign: TextAlign.center,
           ),
         ],
       ),
     );
   }
+
   void _showSearch(BuildContext context) {
     final searching = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Search'),
+        title: const Text('Search', style: TextStyle(fontFamily: 'Bitcount Grid Double')),
         content: TextField(
+          textInputAction: TextInputAction.search,
           controller: searching,
           autofocus: true,
           decoration: const InputDecoration(
@@ -522,7 +741,14 @@ class HomePage extends StatelessWidget {
             prefixIcon: Icon( Icons.search),
             border: OutlineInputBorder(),
           ),
-          onSubmitted: (query) => _searchquery(context, query, searching),
+          textCapitalization: TextCapitalization.none,
+          onSubmitted: (query) {
+          FocusScope.of(context).unfocus();
+          final cleanQuery = query.trim().replaceAll('\n', '');
+          if (cleanQuery.isNotEmpty){
+              _searchquery(context, cleanQuery, searching);
+            }
+          },
         ),
         actions: [
         TextButton(
@@ -530,14 +756,14 @@ class HomePage extends StatelessWidget {
             searching.clear();
             Navigator.pop(context);
           },
-          child: const Text('Cancel'),
+          child: const Text('Cancel', style: TextStyle(fontFamily: 'Archivo Black')),
         ),
         ElevatedButton(
           onPressed: () {
             final query = searching.text.trim();
             _searchquery(context, query, searching);
           },
-          child: const Text('Search'),
+          child: const Text('Search', style: TextStyle(fontFamily: 'Archivo Black')),
         ),
       ],
       ),
@@ -545,68 +771,81 @@ class HomePage extends StatelessWidget {
   }
 
   void _searchquery(BuildContext context, String query, TextEditingController searching) {
-    final lowerQuery = query.toLowerCase().trim();
+  if (!context.mounted) return;
+  
+  final lowerQuery = query.toLowerCase().trim();
 
-    if (['about', 'support', 'contact'].contains(lowerQuery)) {
-      Navigator.pop(context); 
-      
-      if (_scrollToSection(context, lowerQuery)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Scrolled to "$lowerQuery" section')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Returning to HomePage for "$lowerQuery"...'),
-            backgroundColor: Colors.amber,
-          ),
-        );
-        Navigator.pop(context);
-      }
-    } 
-    else if (['category', 'registration', 'faq', 'competition'].contains(lowerQuery)) {
-      Navigator.pop(context); // Close search dialog
-      
-      if (['category', 'registration', 'faq'].contains(lowerQuery)) {
-        if (_scrollToSection(context, lowerQuery)) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Scrolled to "$lowerQuery" section')),
-          );
-        } else {
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Navigating to CompetitionPage for "$lowerQuery"...'),
-              backgroundColor: Colors.amber,
-            ),
-          );
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CompetitionPage(
-                initialSection: lowerQuery,
-              ),
-            ),
-          );
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Scrolling to top of CompetitionPage')),
-        );
-
-      }
-    } 
-
-    else {
+  if (['about', 'support', 'contact'].contains(lowerQuery)) {
+    Navigator.pop(context);  // Close dialog first
+    
+    if (_scrollToSection(context, lowerQuery)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('No results found for "$query"'),
+          content: Text('🔍 Scrolled to "$lowerQuery" section', style: _smallWordStyle(color: Colors.white)),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('⚠️ Could not scroll to "$lowerQuery" section', style: _smallWordStyle(color: Colors.white)),
           backgroundColor: Colors.amber,
           duration: const Duration(seconds: 2),
         ),
       );
     }
+  } 
+  else if (['category', 'registration', 'faq', 'competition'].contains(lowerQuery)) {
+    Navigator.pop(context);  // Close search dialog
+    
+    if (['category', 'registration', 'faq'].contains(lowerQuery)) {
+      if (_scrollToSection(context, lowerQuery)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('🔍 Scrolled to "$lowerQuery" section', style: _smallWordStyle(color: Colors.white)),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('🔍 Navigating to CompetitionPage for "$lowerQuery"...', style: _smallWordStyle(color: Colors.white)),
+            backgroundColor: Colors.amber,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CompetitionPage(initialSection: lowerQuery),
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('🔍 Navigating to CompetitionPage...', style: _smallWordStyle(color: Colors.white)),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CompetitionPage(initialSection: null),
+        ),
+      );
+    }
+  } 
+  else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('⚠️ No results found for "$query"', style: _smallWordStyle(color: Colors.white)),
+        backgroundColor: Colors.amber,
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
+}
 
   void _scrolltoTop(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -614,13 +853,12 @@ class HomePage extends StatelessWidget {
         _scrollController.jumpTo(0.0);
       }
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Returned to HomePage top'),
-          duration: Duration(seconds: 1),
+        SnackBar(
+          content: Text('Returned to HomePage top', style: _smallWordStyle(color: Colors.white)),
+          duration: const Duration(seconds: 1),
           behavior: SnackBarBehavior.floating,
           ),
       );
     });
   }
 }
-

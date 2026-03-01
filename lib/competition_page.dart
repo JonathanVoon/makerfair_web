@@ -11,6 +11,23 @@ class CompetitionPage extends StatelessWidget {
   
   CompetitionPage({super.key, this.initialSection});
 
+  TextStyle _bigWordStyle({double fontSize = 32, Color? color}) {
+    return TextStyle(
+      fontFamily: 'Bungee',
+      fontSize: fontSize,
+      fontWeight: FontWeight.bold,
+      color: color ?? const Color(0xFF001F3F),
+    );
+  }
+
+  TextStyle _smallWordStyle({double fontSize = 16, Color? color}) {
+    return TextStyle(
+      fontFamily: 'Archivo Black',
+      fontSize: fontSize,
+      color: color ?? Colors.grey[800],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (initialSection != null) {
@@ -24,17 +41,20 @@ class CompetitionPage extends StatelessWidget {
         child: MakerFairbar(
           title: const Text('PETROBOTS Maker Fair 2026'),
           onNavigate: (section) {
-
+            if (!context.mounted) return;
+            
             if (['category', 'registration', 'faq'].contains(section)) {
               _scrollToSection(context, section);
             } else if (['about', 'support', 'contact'].contains(section)) {
               Navigator.pop(context, section);
             } else if (section == 'competition') {
-              Scrollable.ensureVisible(
-                _introKey.currentContext!,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
+              if (_introKey.currentContext != null) {
+                Scrollable.ensureVisible(
+                  _introKey.currentContext!,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              }
             }
           },
           onSearch: () => _showSearch(context),
@@ -60,53 +80,57 @@ class CompetitionPage extends StatelessWidget {
       ),
     );
   }
+
   bool _scrollToSection(BuildContext context, String section) {
-    late final GlobalKey targetKey;
-    switch (section) {
-      case 'category':
-        targetKey = _categoryKey;
-        break;
-      case 'registration':
-        targetKey = _registrationKey;
-        break;
-      case 'faq':
-        targetKey = _faqKey;
-        break;
-      default:
-        return false;
+      if (!context.mounted) return false;
+      
+      late final GlobalKey targetKey;
+      switch (section) {
+        case 'category':
+          targetKey = _categoryKey;
+          break;
+        case 'registration':
+          targetKey = _registrationKey;
+          break;
+        case 'faq':
+          targetKey = _faqKey;
+          break;
+        default:
+          return false;
+      }
+      final scrollContext = targetKey.currentContext;
+      if (scrollContext != null) {
+        Scrollable.ensureVisible(
+          scrollContext,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          alignment: 0.1,
+        );
+        return true;
+      }
+      return false;
     }
-    final scrollContext = targetKey.currentContext;
-    if (scrollContext != null) {
-      Scrollable.ensureVisible(
-        scrollContext,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-        alignment: 0.1,
-      );
-      return true;
-    }
-    return false;
-  }
 
   Widget _buildIntro(BuildContext context, {Key? key}) {
     return Column(
       key: key,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Container(
+          height: 7,
+          width: double.infinity,
+          color: const Color(0xFFD4AF37),
+        ),
+        const SizedBox(height: 24),
+        
         Text(
           'PETROBOTS RoboTrack GP 2026',
-          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF001F3F),
-          ),
+          style: _bigWordStyle(fontSize: 32),
         ),
         const SizedBox(height: 16),
         Text(
           'Welcome to the ultimate robotics competition! Showcase your innovation, engineering skills, and creativity on the global stage.',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: Colors.grey[800],
-            height: 1.6,
-          ),
+          style: _smallWordStyle(fontSize: 16, color: Colors.grey[800]).copyWith(height: 1.6),
         ),
         const SizedBox(height: 24),
 
@@ -125,6 +149,13 @@ class CompetitionPage extends StatelessWidget {
             ),
           ),
         ),
+        
+        const SizedBox(height: 24),
+        Container(
+          height: 7,
+          width: double.infinity,
+          color: const Color(0xFFD4AF37),
+        ),
       ],
     );
   }
@@ -136,18 +167,12 @@ class CompetitionPage extends StatelessWidget {
       children: [
         Text(
           'Competition Categories',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF001F3F),
-          ),
+          style: _bigWordStyle(fontSize: 32),
         ),
         const SizedBox(height: 16),
         Text(
           'The RoboTrack GP tournament is divided into two distinct categories based on technical experience and hardware capabilities:',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: Colors.grey[800],
-            height: 1.6,
-          ),
+          style: _smallWordStyle(fontSize: 16, color: Colors.grey[800]).copyWith(height: 1.6),
         ),
         const SizedBox(height: 24),
 
@@ -196,7 +221,7 @@ class CompetitionPage extends StatelessWidget {
               Expanded(
                 child: Text(
                   'Note: All robots must undergo mandatory technical inspection 30 minutes before the tournament. Wireless modules (Bluetooth/Wi-Fi) must be disabled during official runs.',
-                  style: TextStyle(color: Colors.amber[900], fontSize: 14),
+                  style: _smallWordStyle(fontSize: 14, color: Colors.amber[900]),
                 ),
               ),
             ],
@@ -231,11 +256,20 @@ class CompetitionPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: BorderColor)),
+          Text(
+            title,
+            style: _bigWordStyle(fontSize: 22, color: BorderColor),
+          ),
           const SizedBox(height: 8),
-          Text(subtitle, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: Colors.grey[800])),
+          Text(
+            subtitle,
+            style: _smallWordStyle(fontSize: 16, color: Colors.grey[800]).copyWith(fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 12),
-          Text(description, style: TextStyle(color: Colors.grey[700], fontSize: 14, height: 1.8)),
+          Text(
+            description,
+            style: _smallWordStyle(fontSize: 14, color: Colors.grey[700]).copyWith(height: 1.8),
+          ),
         ],
       ),
     );
@@ -248,27 +282,27 @@ class CompetitionPage extends StatelessWidget {
       children: [
         Text(
           'Register for RoboTrack GP',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF001F3F),
-          ),
+          style: _bigWordStyle(fontSize: 32),
         ),
         const SizedBox(height: 16),
         Text(
           'Ready to compete? Click the button below to open the registration form.',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.grey[800]),
+          style: _smallWordStyle(fontSize: 16, color: Colors.grey[800]),
         ),
         const SizedBox(height: 24),
 
         ElevatedButton.icon(
           onPressed: () async {
-            final uri = Uri.parse('https://forms.office.com/r/YrcvZ61nTff');
+            final uri = Uri.parse('https://forms.office.com/r/YrcvZ61nTff  ');
             if (await canLaunchUrl(uri)) {
               await launchUrl(uri, mode: LaunchMode.externalApplication);
             }
           },
           icon: const Icon(Icons.open_in_new),
-          label: const Text('Open Registration Form'),
+          label: Text(
+            'Open Registration Form',
+            style: _smallWordStyle(fontSize: 16, color: Colors.white),
+          ),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF001F3F),
             foregroundColor: Colors.white,
@@ -287,13 +321,13 @@ class CompetitionPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Registration Fees:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('Registration Fees:', style: _bigWordStyle(fontSize: 18)),
               const SizedBox(height: 8),
-              Text('• Expert: RM200 (Local) / \$100 (International)', style: TextStyle(color: Colors.grey[800])),
-              Text('• Grandmaster: RM300 (Local) / \$150 (International)', style: TextStyle(color: Colors.grey[800])),
+              Text('• Expert: RM200 (Local) / \$100 (International)', style: _smallWordStyle(fontSize: 14, color: Colors.grey[800])),
+              Text('• Grandmaster: RM300 (Local) / \$150 (International)', style: _smallWordStyle(fontSize: 14, color: Colors.grey[800])),
               const SizedBox(height: 8),
               Text('Includes: Participation certificate, door gift, 3 meals/day, Award Night access',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+                  style: _smallWordStyle(fontSize: 13, color: Colors.grey[600])),
             ],
           ),
         ),
@@ -307,11 +341,8 @@ class CompetitionPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          ' Frequently Asked Questions (FAQ)',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF001F3F),
-          ),
+          'Frequently Asked Questions (FAQ)',
+          style: _bigWordStyle(fontSize: 32),
         ),
         const SizedBox(height: 16),
 
@@ -333,33 +364,50 @@ class CompetitionPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: ExpansionTile(
-        title: Text(question, style: const TextStyle(fontWeight: FontWeight.w600)),
+        title: Text(
+          question,
+          style: _bigWordStyle(fontSize: 18).copyWith(fontWeight: FontWeight.w600),
+        ),
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Text(answer, style: TextStyle(color: Colors.grey[800])),
+            child: Text(
+              answer,
+              style: _smallWordStyle(fontSize: 14, color: Colors.grey[800]),
+            ),
           ),
         ],
       ),
     );
   }
 
-void _showSearch(BuildContext context) {
+  void _showSearch(BuildContext context) {
     final searching = TextEditingController();
     
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('🔍 Search'),
+        title: Text('🔍 Search', style: _bigWordStyle(fontSize: 24)),
         content: TextField(
+          textInputAction: TextInputAction.search,
           controller: searching,
           autofocus: true,
+          keyboardType: TextInputType.text,
+          enableInteractiveSelection: true,
+          onEditingComplete: () {},
           decoration: const InputDecoration(
             hintText: 'Search: about, support, contact, category, registration, faq...',
             prefixIcon: Icon(Icons.search),
             border: OutlineInputBorder(),
           ),
-          onSubmitted: (query) => _searchQuery(context, query, searching),
+          textCapitalization: TextCapitalization.none,
+          onSubmitted: (query) {
+          FocusScope.of(context).unfocus();
+          final cleanQuery = query.trim().replaceAll('\n', '');
+          if (cleanQuery.isNotEmpty){
+              _searchquery(context, cleanQuery, searching);
+            }
+          },
         ),
         actions: [
           TextButton(
@@ -367,68 +415,86 @@ void _showSearch(BuildContext context) {
               searching.clear();
               Navigator.pop(context);
             },
-            child: const Text('Cancel'),
+            child: Text('Cancel', style: _smallWordStyle(fontSize: 14)),
           ),
           ElevatedButton(
             onPressed: () {
               final query = searching.text.trim();
-              _searchQuery(context, query, searching);
+              _searchquery(context, query, searching);
             },
-            child: const Text('Search'),
+            child: Text('Search', style: _smallWordStyle(fontSize: 14, color: Colors.white)),
           ),
         ],
       ),
     ).then((_) => searching.dispose()); 
   }
 
-  void _searchQuery(BuildContext context, String query, TextEditingController searching) {
-    final lowerQuery = query.toLowerCase().trim();
+  void _searchquery(BuildContext context, String query, TextEditingController searching) {
+    if (!context.mounted) return;
     
+    final lowerQuery = query.toLowerCase().trim();
+
     if (['about', 'support', 'contact'].contains(lowerQuery)) {
       Navigator.pop(context); 
-   
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Returning to HomePage for "$lowerQuery"...')),
-      );
-      Navigator.pop(context, lowerQuery); 
-    } 
-    else if (['category', 'registration', 'faq', 'competition'].contains(lowerQuery)) {
-      Navigator.pop(context);
-
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop(lowerQuery);
+        }
+      });
+    }
+    else if (['category', 'registration','faq', 'competition'].contains(lowerQuery)) {
+      Navigator.pop(context); 
+      
       if (['category', 'registration', 'faq'].contains(lowerQuery)) {
-
         if (_scrollToSection(context, lowerQuery)) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Scrolled to "$lowerQuery" section')),
+            SnackBar(
+              content: Text('🔍 Scrolled to "$lowerQuery" section', style: _smallWordStyle(color: Colors.white)),
+              duration: const Duration(seconds: 1),
+            ),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Could not scroll to "$lowerQuery" section'),
+              content: Text('🔍 Navigating to CompetitionPage for "$lowerQuery"...', style: _smallWordStyle(color: Colors.white)),
               backgroundColor: Colors.amber,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CompetitionPage(initialSection: lowerQuery),
             ),
           );
         }
       } else {
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('🔍 Scrolling to top of CompetitionPage')),
-        );
-        Scrollable.ensureVisible(
-          _introKey.currentContext!,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final introContext = _introKey.currentContext;
+          if (introContext != null) {
+            Scrollable.ensureVisible(
+              introContext,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('🔍 Scrolled to top of CompetitionPage', style: _smallWordStyle(color: Colors.white)),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        });
       }
     } 
     else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(' No results found for "$query"'),
+          content: Text('⚠️ No results found for "$query"', style: _smallWordStyle(color: Colors.white)),
           backgroundColor: Colors.amber,
           duration: const Duration(seconds: 2),
         ),
       );
     }
   }
-}   
+}
