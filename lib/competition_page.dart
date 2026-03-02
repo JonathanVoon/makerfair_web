@@ -11,6 +11,8 @@ class CompetitionPage extends StatelessWidget {
   
   CompetitionPage({super.key, this.initialSection});
 
+  static const String participantsBookletUrl = 'https://utpmy-my.sharepoint.com/:b:/g/personal/yen_22011091_utp_edu_my/IQBa8CduXTzaTYgKXSl2mRgZAakFU2RClmymFzcrE0n4brY?e=VCmp4Z';
+
   TextStyle _bigWordStyle({double fontSize = 32, Color? color}) {
     return TextStyle(
       fontFamily: 'Bungee',
@@ -189,6 +191,26 @@ class CompetitionPage extends StatelessWidget {
           '• Prizes: 1st RM2000 | 2nd RM1500 | 3rd RM1000',
           Colors.blueGrey,
         ),
+        const SizedBox(height: 12),
+        ElevatedButton.icon(
+          onPressed: () async {
+            final uri = Uri.parse(participantsBookletUrl);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('⚠️ Could not open participants booklet')),
+              );
+            }
+          },
+          icon: const Icon(Icons.book, size: 18),
+          label: const Text('Expert Category Participants Booklet'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF001F3F),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          ),
+        ),
         const SizedBox(height: 16),
 
         _buildCategoryCard(
@@ -203,6 +225,26 @@ class CompetitionPage extends StatelessWidget {
           '• Entry Fee: RM300 (Local) / \$150 (International)\n'
           '• Prizes: 1st RM3000 | 2nd RM2000 | 3rd RM1500',
           const Color(0xFF001F3F),
+        ),
+        const SizedBox(height: 12),
+        ElevatedButton.icon(
+          onPressed: () async {
+            final uri = Uri.parse(participantsBookletUrl);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('⚠️ Could not open participants booklet')),
+              );
+            }
+          },
+          icon: const Icon(Icons.book, size: 18),
+          label: const Text('Grandmaster Category Participants Booklet'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF001F3F),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          ),
         ),
         const SizedBox(height: 24),
 
@@ -293,7 +335,7 @@ class CompetitionPage extends StatelessWidget {
 
         ElevatedButton.icon(
           onPressed: () async {
-            final uri = Uri.parse('https://forms.office.com/r/YrcvZ61nTff  ');
+            final uri = Uri.parse('https://forms.office.com/r/YrcvZ61nTff    ');
             if (await canLaunchUrl(uri)) {
               await launchUrl(uri, mode: LaunchMode.externalApplication);
             }

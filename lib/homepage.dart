@@ -20,7 +20,8 @@ class _HomePageState extends State<HomePage> {
   final PageController _pageController = PageController();
   int _currentImageIndex = 0;
   Timer? _slideshowTimer;
-  
+ 
+  static const String _marketingProposalUrl = 'https://utpmy-my.sharepoint.com/:b:/g/personal/yen_22011091_utp_edu_my/IQBtt2nVqMGoRpFMeiY8VHjoAYAn2rhi2kgjKn2C2GU9ZYs?e=u7DBLP';
 
   final List<String> _heroImages = [
     'assets/Group-photo-Makerfair25.png',
@@ -72,7 +73,7 @@ class _HomePageState extends State<HomePage> {
 
   TextStyle _bigWordStyle({double fontSize = 32, Color? color}) {
     return TextStyle(
-      fontFamily: 'Bungee',
+      fontFamily: 'Bungee',  
       fontSize: fontSize,
       fontWeight: FontWeight.bold,
       color: color ?? const Color(0xFF001F3F),
@@ -81,7 +82,7 @@ class _HomePageState extends State<HomePage> {
 
   TextStyle _smallWordStyle({double fontSize = 16, Color? color}) {
     return TextStyle(
-      fontFamily: 'Archivo Black',
+      fontFamily: 'Archivo Black',  
       fontSize: fontSize,
       color: color ?? Colors.grey[800],
     );
@@ -207,7 +208,7 @@ class _HomePageState extends State<HomePage> {
                         image: AssetImage(_heroImages[index]), 
                         fit: BoxFit.cover,
                         colorFilter: ColorFilter.mode(
-                          const Color(0xFF001F3F).withOpacity(0.6), 
+                          const Color(0xFF001F3F).withOpacity(0.55), 
                           BlendMode.multiply,
                         ),
                       ),
@@ -222,19 +223,19 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Text(
                       'PETROBOTS Maker Fair 2026',
-                      style: _bigWordStyle(fontSize: 48, color: Colors.white),
+                      style: _bigWordStyle(fontSize: 48, color: Colors.white),  
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     Text(
                       'Engineering Intelligence with Robotics and Automation',
-                      style: _bigWordStyle(fontSize: 24, color: Colors.white),
+                      style: _bigWordStyle(fontSize: 24, color: Colors.white),  
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
                     Text(
                       '27th-28th June 2026 | Universiti Teknologi PETRONAS (UTP)',
-                      style: _smallWordStyle(fontSize: 16, color: Colors.white),
+                      style: _smallWordStyle(fontSize: 16, color: Colors.white),  
                     ),
                     const SizedBox(height: 32),
                     Row(
@@ -262,7 +263,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           child: Text(
                             'Explore Competition',
-                            style: _smallWordStyle(fontSize: 16, color: Colors.white),
+                            style: _smallWordStyle(fontSize: 16, color: Colors.white),  
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -274,7 +275,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           child: Text(
                             'Support Us',
-                            style: _smallWordStyle(fontSize: 16, color: Colors.white),
+                            style: _smallWordStyle(fontSize: 16, color: Colors.white), 
                           ),
                         ),
                       ],
@@ -334,7 +335,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(40),
           child: Text(
             'About PETROBOTS Maker Fair',
-            style: _bigWordStyle(fontSize: 32),
+            style: _bigWordStyle(fontSize: 32),  
           ),
         ),
 
@@ -342,7 +343,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.symmetric(horizontal: 40),
           child: Text(
             'UTP Robotics Society (PETROBOTS) is a well-established robotics society that has been active for a long time at UTP. Originally formed to compete in ROBOCON, it has gradually evolved to serve as a platform for undergraduate robotics advancement for students from diverse backgrounds.',
-            style: _smallWordStyle(fontSize: 16, color: Colors.grey[800]).copyWith(height: 1.6),
+            style: _smallWordStyle(fontSize: 16, color: Colors.grey[800]).copyWith(height: 1.6),  
           ),
         ),
         const SizedBox(height: 24),
@@ -378,12 +379,12 @@ class _HomePageState extends State<HomePage> {
         children: [
           Text(
             title,
-            style: _bigWordStyle(fontSize: 18),
+            style: _bigWordStyle(fontSize: 18),  
           ),
           const SizedBox(height: 8),
           Text(
             description,
-            style: _smallWordStyle(fontSize: 14, color: Colors.grey[700]),
+            style: _smallWordStyle(fontSize: 14, color: Colors.grey[700]),  
           ),
         ],
       ),
@@ -399,7 +400,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(40),
           child: Text(
             'Support the Event',
-            style: _bigWordStyle(fontSize: 32),
+            style: _bigWordStyle(fontSize: 32), 
           ),
         ),
 
@@ -432,7 +433,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
           child: Text(
             'Contributor support does not include branding, publicity, or commercial benefits and follows UTP financial governance policy.',
-            style: _smallWordStyle(fontSize: 11, color: Colors.grey).copyWith(fontStyle: FontStyle.italic),
+            style: _smallWordStyle(fontSize: 11, color: Colors.grey).copyWith(fontStyle: FontStyle.italic),  
             textAlign: TextAlign.center,
           ),
         ),
@@ -453,18 +454,18 @@ class _HomePageState extends State<HomePage> {
           children: [
             Text(
               'Contributor Support',
-              style: _bigWordStyle(fontSize: 20),
+              style: _bigWordStyle(fontSize: 20),  
             ),
             const SizedBox(height: 12),
             Text(
               'Non-commercial support for the event. Appreciation-based contribution to foster maker culture.',
-              style: _smallWordStyle(fontSize: 14).copyWith(height: 1.6),
+              style: _smallWordStyle(fontSize: 14).copyWith(height: 1.6),  
             ),
             const SizedBox(height: 16),
             ExpansionTile(
               title: Text(
                 'What Contributors Receive',
-                style: _bigWordStyle(fontSize: 16).copyWith(fontWeight: FontWeight.w600),
+                style: _bigWordStyle(fontSize: 16).copyWith(fontWeight: FontWeight.w600),  
               ),
               children: [
                 Padding(
@@ -472,8 +473,8 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('• Eligible for Tax Exemption', style: _smallWordStyle(fontSize: 13)),
-                      Text('• Post-event impact report', style: _smallWordStyle(fontSize: 13)),
+                      Text('• Eligible for Tax Exemption', style: _smallWordStyle(fontSize: 13)), 
+                      Text('• Post-event impact report', style: _smallWordStyle(fontSize: 13)), 
                     ],
                   ),
                 ),
@@ -482,12 +483,34 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 16),
             Text(
               'ASSISTANT HEAD OF SPONSORSHIP DEPARTMENT',
-              style: _bigWordStyle(fontSize: 12),
+              style: _bigWordStyle(fontSize: 12), 
             ),
             Text(
               'Muhammad Danish Abqari bin Syafiq Jasrin ',
-              style: _smallWordStyle(fontSize: 14).copyWith(fontWeight: FontWeight.w500),
+              style: _smallWordStyle(fontSize: 14).copyWith(fontWeight: FontWeight.w500),  
             ),
+            const SizedBox(height: 12),
+            
+            ElevatedButton.icon(
+              onPressed: () async {
+                final uri = Uri.parse(_marketingProposalUrl);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('⚠️ Could not open marketing proposal')),
+                  );
+                }
+              },
+              icon: const Icon(Icons.download, size: 18),
+              label: const Text('View Marketing Proposal'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF001F3F),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
+            ),
+            
             const SizedBox(height: 12),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -503,7 +526,7 @@ class _HomePageState extends State<HomePage> {
               },
               child: Text(
                 'Contact as Contributor',
-                style: _smallWordStyle(fontSize: 14, color: Colors.white),
+                style: _smallWordStyle(fontSize: 14, color: Colors.white),  
               ),
             ),
           ],
@@ -524,18 +547,18 @@ class _HomePageState extends State<HomePage> {
           children: [
             Text(
               'Event Sponsorship',
-              style: _bigWordStyle(fontSize: 20),
+              style: _bigWordStyle(fontSize: 20), 
             ),
             const SizedBox(height: 12),
             Text(
               'Commercial partnership opportunities with branding, engagement, and social media exposure.',
-              style: _smallWordStyle(fontSize: 14).copyWith(height: 1.6),
+              style: _smallWordStyle(fontSize: 14).copyWith(height: 1.6), 
             ),
             const SizedBox(height: 16),
             ExpansionTile(
               title: Text(
                 'What Sponsors Receive',
-                style: _bigWordStyle(fontSize: 16).copyWith(fontWeight: FontWeight.w600),
+                style: _bigWordStyle(fontSize: 16).copyWith(fontWeight: FontWeight.w600),  
               ),
               children: [
                 Padding(
@@ -543,11 +566,11 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('• Logo placement on event materials', style: _smallWordStyle(fontSize: 13)),
-                      Text('• Not Eligible for Tax Exemption', style: _smallWordStyle(fontSize: 13)),
-                      Text('• Companies are eligible to register for exhibition booths ', style: _smallWordStyle(fontSize: 13)),
-                      Text('• Social media exposure', style: _smallWordStyle(fontSize: 13)),
-                      Text('• Opening & closing ceremony mention', style: _smallWordStyle(fontSize: 13)),
+                      Text('• Logo placement on event materials', style: _smallWordStyle(fontSize: 13)), 
+                      Text('• Not Eligible for Tax Exemption', style: _smallWordStyle(fontSize: 13)), 
+                      Text('• Companies are eligible to register for exhibition booths ', style: _smallWordStyle(fontSize: 13)), 
+                      Text('• Social media exposure', style: _smallWordStyle(fontSize: 13)),  
+                      Text('• Opening & closing ceremony mention', style: _smallWordStyle(fontSize: 13)),  
                     ],
                   ),
                 ),
@@ -556,12 +579,34 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 16),
             Text(
               'HEAD OF SPONSORSHIP DEPARTMENT',
-              style: _bigWordStyle(fontSize: 12),
+              style: _bigWordStyle(fontSize: 12),  
             ),
             Text(
               'Lim Ming Yang',
-              style: _smallWordStyle(fontSize: 14).copyWith(fontWeight: FontWeight.w500),
+              style: _smallWordStyle(fontSize: 14).copyWith(fontWeight: FontWeight.w500), 
             ),
+            const SizedBox(height: 12),
+            
+            ElevatedButton.icon(
+              onPressed: () async {
+                final uri = Uri.parse(_marketingProposalUrl);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('⚠️ Could not open marketing proposal')),
+                  );
+                }
+              },
+              icon: const Icon(Icons.download, size: 18),
+              label: const Text('View Marketing Proposal'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF001F3F),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
+            ),
+            
             const SizedBox(height: 12),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -577,7 +622,7 @@ class _HomePageState extends State<HomePage> {
               },
               child: Text(
                 'Contact as Sponsor',
-                style: _smallWordStyle(fontSize: 14, color: Colors.white),
+                style: _smallWordStyle(fontSize: 14, color: Colors.white), 
               ),
             ),
           ],
@@ -595,7 +640,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(40),
           child: Text(
             'Contact Us',
-            style: _bigWordStyle(fontSize: 32),
+            style: _bigWordStyle(fontSize: 32), 
           ),
         ),
         Padding(
@@ -622,11 +667,11 @@ class _HomePageState extends State<HomePage> {
         children: [
           Text(
             role,
-            style: _bigWordStyle(fontSize: 16),
+            style: _bigWordStyle(fontSize: 16), 
           ),
           Text(
             name,
-            style: _smallWordStyle(fontSize: 14, color: Colors.grey[700]),
+            style: _smallWordStyle(fontSize: 14, color: Colors.grey[700]), 
           ),
           InkWell(
             onTap: () async {
@@ -637,7 +682,7 @@ class _HomePageState extends State<HomePage> {
               email,
               style: _smallWordStyle(fontSize: 14, color: const Color(0xFF001F3F)).copyWith(
                 decoration: TextDecoration.underline,
-              ),
+              ),  
             ),
           ),
         ],
@@ -660,7 +705,7 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) =>
-                  Text('PETROBOTS', style: _bigWordStyle(fontSize: 24, color: Colors.white)),
+                  Text('PETROBOTS', style: _bigWordStyle(fontSize: 24, color: Colors.white)), 
             ),
           ),
           const SizedBox(height: 16),
@@ -670,7 +715,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               InkWell(
                 onTap: () async {
-                final uri = Uri.parse('https://www.instagram.com/petrobotsmakerfair.utp?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==    ');
+                final uri = Uri.parse('https://www.instagram.com/petrobotsmakerfair.utp?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==      ');
                 if (await canLaunchUrl(uri)) {
                   await launchUrl(uri, mode: LaunchMode.externalApplication);
                 }
@@ -687,7 +732,7 @@ class _HomePageState extends State<HomePage> {
               ),
               InkWell(
                 onTap: () async {
-                  final uri = Uri.parse('https://www.linkedin.com/company/utp-petrobots/posts/?feedView=all    ');
+                  final uri = Uri.parse('https://www.linkedin.com/company/utp-petrobots/posts/?feedView=all      ');
                   if (await canLaunchUrl(uri)) {
                     await launchUrl(uri, mode: LaunchMode.externalApplication);
                   }
@@ -706,12 +751,12 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 16),
           Text(
             'PETROBOTS Maker Fair 2026',
-            style: _bigWordStyle(fontSize: 18, color: Colors.white70),
+            style: _bigWordStyle(fontSize: 18, color: Colors.white70), 
           ),
           const SizedBox(height: 8),
           Text(
             'Universiti Teknologi PETRONAS (UTP), 32610 Seri Iskandar, Perak, Malaysia',
-            style: _smallWordStyle(fontSize: 12, color: Colors.white),
+            style: _smallWordStyle(fontSize: 12, color: Colors.white), 
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
@@ -731,7 +776,7 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Search', style: TextStyle(fontFamily: 'Bitcount Grid Double')),
+        title: Text('Search', style: _bigWordStyle(fontSize: 24)), 
         content: TextField(
           textInputAction: TextInputAction.search,
           controller: searching,
@@ -756,14 +801,14 @@ class _HomePageState extends State<HomePage> {
             searching.clear();
             Navigator.pop(context);
           },
-          child: const Text('Cancel', style: TextStyle(fontFamily: 'Archivo Black')),
+          child: Text('Cancel', style: _smallWordStyle(fontSize: 14)),
         ),
         ElevatedButton(
           onPressed: () {
             final query = searching.text.trim();
             _searchquery(context, query, searching);
           },
-          child: const Text('Search', style: TextStyle(fontFamily: 'Archivo Black')),
+          child: Text('Search', style: _smallWordStyle(fontSize: 14, color: Colors.white)),
         ),
       ],
       ),
@@ -781,14 +826,14 @@ class _HomePageState extends State<HomePage> {
     if (_scrollToSection(context, lowerQuery)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('🔍 Scrolled to "$lowerQuery" section', style: _smallWordStyle(color: Colors.white)),
+          content: Text('🔍 Scrolled to "$lowerQuery" section', style: _smallWordStyle(color: Colors.white)), 
           duration: const Duration(seconds: 2),
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('⚠️ Could not scroll to "$lowerQuery" section', style: _smallWordStyle(color: Colors.white)),
+          content: Text('⚠️ Could not scroll to "$lowerQuery" section', style: _smallWordStyle(color: Colors.white)), 
           backgroundColor: Colors.amber,
           duration: const Duration(seconds: 2),
         ),
@@ -802,15 +847,14 @@ class _HomePageState extends State<HomePage> {
       if (_scrollToSection(context, lowerQuery)) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('🔍 Scrolled to "$lowerQuery" section', style: _smallWordStyle(color: Colors.white)),
+            content: Text('🔍 Scrolled to "$lowerQuery" section', style: _smallWordStyle(color: Colors.white)), 
             duration: const Duration(seconds: 2),
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('🔍 Navigating to CompetitionPage for "$lowerQuery"...', style: _smallWordStyle(color: Colors.white)),
-            backgroundColor: Colors.amber,
+            content: Text('🔍 Navigating to CompetitionPage for "$lowerQuery"...', style: _smallWordStyle(color: Colors.white)),  
             duration: const Duration(seconds: 2),
           ),
         );
@@ -824,7 +868,7 @@ class _HomePageState extends State<HomePage> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('🔍 Navigating to CompetitionPage...', style: _smallWordStyle(color: Colors.white)),
+          content: Text('🔍 Navigating to CompetitionPage...', style: _smallWordStyle(color: Colors.white)), 
           duration: const Duration(seconds: 2),
         ),
       );
@@ -839,7 +883,7 @@ class _HomePageState extends State<HomePage> {
   else {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('⚠️ No results found for "$query"', style: _smallWordStyle(color: Colors.white)),
+        content: Text('⚠️ No results found for "$query"', style: _smallWordStyle(color: Colors.white)), 
         backgroundColor: Colors.amber,
         duration: const Duration(seconds: 2),
       ),
@@ -854,7 +898,7 @@ class _HomePageState extends State<HomePage> {
       }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Returned to HomePage top', style: _smallWordStyle(color: Colors.white)),
+          content: Text('Returned to HomePage top', style: _smallWordStyle(color: Colors.white)), 
           duration: const Duration(seconds: 1),
           behavior: SnackBarBehavior.floating,
           ),
